@@ -1,4 +1,4 @@
-package com.example.news.domain;
+package com.example.news.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;

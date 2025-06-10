@@ -1,21 +1,20 @@
-# application-local.yml (git ignore)
 spring:
 #  jwt:
 #    secret: vmfhaadadadaddaddadltmskdlstkfkdgodyroqkfwkdbalroqkfwkdbalqwerqwerqwer
 
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/news_db?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     username: root
     password: zerobase24!
 
-    jpa:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
       hibernate:
-        ddl-auto: update
-      show-sql: true
-      properties:
-        hibernate:
-          format_sql: true
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true
 
 # (Elasticsearch 등 추가 설정은 추후)
 
