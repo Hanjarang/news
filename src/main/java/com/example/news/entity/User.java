@@ -27,7 +27,6 @@ public class User {
   private String email;
   private LocalDateTime createAt;
 
-
   //확장 필드
   // private String phoneNumber;
 
