@@ -2,9 +2,13 @@ package com.example.news.service.impl;
 
 import com.example.news.exception.AIServiceException;
 import com.example.news.service.AIService;
-import lombok.Value;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+@Service
+@RequiredArgsConstructor
 public class AIServiceImpl implements AIService {
 
   private final RestTemplate restTemplate;
