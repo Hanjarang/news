@@ -1,20 +1,23 @@
 package com.example.news.service;
 
+import com.example.news.dto.SummaryRequest;
+import com.example.news.dto.SummaryResponse;
+
 public interface AIService {
 
   /**
    * 본문 텍스트 요약
-   * @param originalText 원본 텍스트
-   * @return 요약된 텍스트
+   * @param request 요약 요청 DTO
+   * @return 응답 DTO
    */
-  String summarizeText(String originalText);
+  SummaryResponse summarizeText(SummaryRequest request);
 
   /**
    * 자연어 검색
-   * @param query 검색 쿼리
-   * @return 검색 결과 텍스트
+   * @param request 검색 요청 DTO
+   * @return 검색 결과 DTO
    */
-  String searchText(String query);
+  SummaryResponse searchText(SummaryRequest request);
 
 
 }

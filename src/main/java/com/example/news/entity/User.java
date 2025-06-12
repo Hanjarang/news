@@ -25,7 +25,7 @@ public class User {
   private String providerId;
   private String name;
   private String email;
-  private LocalDateTime createAt;
+  private LocalDateTime createdAt;
 
   //확장 필드
   // private String phoneNumber;
