@@ -12,5 +12,5 @@ public class SummaryResponse {
   private Long id;
   private String originalText;
   private String summaryText;
-  private LocalDateTime createAt;
+  private LocalDateTime createdAt;
 }

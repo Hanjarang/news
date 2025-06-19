@@ -7,6 +7,7 @@ import com.example.news.exception.AIServiceException;
 import com.example.news.exception.InvalidInputException;
 import com.example.news.exception.SummaryNotFoundException;
 import com.example.news.repository.SummaryRepository;
+import com.example.news.service.AIService;
 import com.example.news.service.SummaryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class SummaryServiceImpl implements SummaryService {
 
   private final SummaryRepository summaryRepository;
+  private final AIService aiService;
 
   @Override
   public SummaryResponse createSummary(SummaryRequest request) {
@@ -27,11 +29,11 @@ public class SummaryServiceImpl implements SummaryService {
 
     try{
       // AI 모델 사용해서 요약 생성 로직 구현
-      String summaryText = "요약된 텍스트"; // 임시 데이터
+      SummaryResponse aiResponse = aiService.summarizeText(request);
 
       Summary summary = Summary.builder()
           .originalText(request.getOriginalText())
-          .summaryText(summaryText) // 임시 데이터
+          .summaryText(aiResponse.getSummaryText())
           .build();
 
       Summary savedSummary = summaryRepository.save(summary);
@@ -49,11 +51,11 @@ public class SummaryServiceImpl implements SummaryService {
 
     try {
       // 검색 로직 구현
-      String summaryText = " 검색 결과"; // 임시 데이터
+      SummaryResponse aiResponse = aiService.searchText(request);
 
       Summary summary = Summary.builder()
           .originalText(request.getOriginalText())
-          .summaryText(summaryText) // 임시 데이터
+          .summaryText(aiResponse.getSummaryText())
           .build();
 
       Summary savedSummary = summaryRepository.save(summary);
@@ -85,7 +87,7 @@ public class SummaryServiceImpl implements SummaryService {
         .id(summary.getId())
         .originalText(summary.getOriginalText())
         .summaryText(summary.getSummaryText())
-        .createAt(summary.getCreatedAt())
+        .createdAt(summary.getCreatedAt())
         .build();
   }
 }
