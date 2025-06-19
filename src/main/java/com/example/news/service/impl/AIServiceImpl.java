@@ -82,15 +82,15 @@ public class AIServiceImpl implements AIService {
     try {
       String originalText = request.getOriginalText().trim();
 
-      // ✅ 길이 제한 (200자 이하)
-      if (originalText.length() > 200) {
-        originalText = originalText.substring(0, 200);
+      // ✅ 길이 제한 (1000자 이하)
+      if (originalText.length() > 1000) {
+        originalText = originalText.substring(0, 1000);
       }
 
       // ✅ 본문 구성
       Map<String, Object> requestBody = new HashMap<>();
       requestBody.put("inputs", originalText);
-      
+
       String json = objectMapper.writeValueAsString(requestBody);
       log.info("Request body: {}", json);
 
