@@ -19,7 +19,8 @@ public class SecurityConfig {
                 // 비회원/회원 모두 접근 가능한 엔드포인트
                 .requestMatchers(
                     "/api/v1/summaries",
-                    "/api/v1/summaries/search"
+                    "/api/v1/summaries/search",
+                    "/api/elasticsearch/**"  // Elasticsearch API 접근 허용
                 ).permitAll()
                 // 회원 전용 엔드포인트
                 .requestMatchers(
