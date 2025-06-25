@@ -39,7 +39,7 @@ public class AIServiceImpl implements AIService {
   @Value("${ai.service.api-key}")
   private String apiKey;
 
-  @Value("${huggingface.api.token}")
+  @Value("${ai.service.api-key}")
   private String apiToken;
 
 
