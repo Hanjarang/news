@@ -76,8 +76,8 @@ public class SummaryServiceImpl implements SummaryService {
       // 응답 생성 (저장 여부와 관계없이 요약 결과 반환)
       return SummaryResponse.builder()
           .id(savedSummary != null ? savedSummary.getId() : null)
-          .originalText(request.getOriginalText())
-          .summaryText(aiResponse.getSummaryText())
+          .originalText(aiResponse.getOriginalText()) // 요약된 영어 텍스트
+          .summaryText(aiResponse.getSummaryText())   // 번역된 한글 텍스트
           .createdAt(LocalDateTime.now())
           .userId(currentUser != null ? currentUser.getId() : null) // 사용자 ID 추가
           .isSaved(currentUser != null) // 저장 여부 표시

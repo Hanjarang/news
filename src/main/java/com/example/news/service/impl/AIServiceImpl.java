@@ -39,7 +39,7 @@ public class AIServiceImpl implements AIService {
       // ✅ 토큰 상태 확인
       log.info("API Token length: {}", apiToken != null ? apiToken.length() : 0);
       log.info("API Token starts with: {}", apiToken != null ? apiToken.substring(0, Math.min(10, apiToken.length())) : "null");
-      
+
       String originalText = request.getOriginalText().trim();
 
       // ✅ 길이 제한 (1000자 이하)
@@ -59,6 +59,7 @@ public class AIServiceImpl implements AIService {
       headers.setBearerAuth(apiToken);
       headers.setContentType(MediaType.APPLICATION_JSON);
       headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+      headers.set("X-Wait-For-Model", "true"); // 모델 로딩 대기
 
       HttpEntity<String> entity = new HttpEntity<>(json, headers);
 
@@ -67,9 +68,7 @@ public class AIServiceImpl implements AIService {
 
       // 더 빠른 요약 모델들 (순서대로 시도)
       String[] modelUrls = {
-        "https://api-inference.huggingface.co/models/sshleifer/distilbart-cnn-12-6",  // 가장 빠름
-        "https://api-inference.huggingface.co/models/facebook/bart-large-cnn",       // 원본 (백업)
-        "https://api-inference.huggingface.co/models/sshleifer/distilbart-xsum-12-6" // 대안
+        "https://api-inference.huggingface.co/models/facebook/bart-large-cnn"// 원본 (백업)
       };
 
       ResponseEntity<String> response = null;
@@ -98,7 +97,16 @@ public class AIServiceImpl implements AIService {
       log.info("Response status: {}", response.getStatusCode());
       log.info("Response body: {}", response.getBody());
 
+      // 응답 구조 분석을 위한 로그 추가
       JsonNode root = objectMapper.readTree(response.getBody());
+      log.info("Response is array: {}", root.isArray());
+      if (root.isArray()) {
+        log.info("Array size: {}", root.size());
+        if (root.size() > 0) {
+          log.info("First element keys: {}", root.get(0).fieldNames());
+          log.info("First element content: {}", root.get(0).toString());
+        }
+      }
 
       if (root.isArray() && root.size() > 0 && root.get(0).has("summary_text")) {
         String englishSummary = root.get(0).get("summary_text").asText();
@@ -110,8 +118,8 @@ public class AIServiceImpl implements AIService {
         log.info("Korean summary: {}", koreanSummary);
 
         return SummaryResponse.builder()
-            .originalText(request.getOriginalText())
-            .summaryText(koreanSummary)
+            .originalText(englishSummary)  // 요약된 영어 텍스트
+            .summaryText(koreanSummary)    // 번역된 한글 텍스트
             .createdAt(LocalDateTime.now())
             .build();
       } else {
