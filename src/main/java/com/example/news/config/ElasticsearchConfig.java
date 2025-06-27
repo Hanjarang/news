@@ -30,6 +30,9 @@ public class ElasticsearchConfig extends ElasticsearchConfiguration {
     @Value("${elasticsearch.password:}")
     private String password;
 
+    @Value("${elasticsearch.ssl.enabled:false}")
+    private boolean sslEnabled;
+
     @Override
     @Bean
     public ClientConfiguration clientConfiguration() {
@@ -39,7 +42,10 @@ public class ElasticsearchConfig extends ElasticsearchConfiguration {
         // 인증 정보가 있는 경우에만 추가
         if (username != null && !username.isEmpty() && password != null && !password.isEmpty()) {
             builder.withBasicAuth(username, password);
-            // 보안이 활성화된 경우 HTTPS 사용 (인증서 검증 비활성화)
+        }
+
+        // SSL이 활성화된 경우 HTTPS 사용 (인증서 검증 비활성화)
+        if (sslEnabled) {
             builder.usingSsl(createTrustAllSSLContext());
         }
 

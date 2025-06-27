@@ -80,8 +80,10 @@ public class ElasticsearchServiceImpl implements ElasticsearchService {
             return Optional.empty();
         }
         
+        // 현재 시간을 시드로 사용하여 매번 다른 랜덤 값 생성
+        Random timeBasedRandom = new Random(System.currentTimeMillis());
         // 랜덤하게 하나 선택
-        NewsDocument randomNews = newsList.get(random.nextInt(newsList.size()));
+        NewsDocument randomNews = newsList.get(timeBasedRandom.nextInt(newsList.size()));
         log.info("랜덤 뉴스 선택: {}", randomNews.getTitle());
         
         return Optional.of(randomNews);
