@@ -25,11 +25,6 @@ public class SummaryController {
     return ResponseEntity.ok(summaryService.createSummary(request));
   }
 
-  @PostMapping("/search")
-  public ResponseEntity<SummaryResponse> searchSummary(@RequestBody SummaryRequest request) {
-    return ResponseEntity.ok(summaryService.searchSummary(request));
-  }
-
   @GetMapping("/{summaryId}")
   public ResponseEntity<SummaryResponse> getSummary(@PathVariable Long summaryId) {
     return ResponseEntity.ok(summaryService.getSummary(summaryId));

@@ -12,12 +12,4 @@ public interface AIService {
    */
   SummaryResponse summarizeText(SummaryRequest request);
 
-  /**
-   * 자연어 검색
-   * @param request 검색 요청 DTO
-   * @return 검색 결과 DTO
-   */
-  SummaryResponse searchText(SummaryRequest request);
-
-
 }

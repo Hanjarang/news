@@ -13,4 +13,6 @@ public class SummaryResponse {
   private String originalText;
   private String summaryText;
   private LocalDateTime createdAt;
+  private Long userId;        // 추가: 사용자 ID (비회원이면 null)
+  private Boolean isSaved;    // 추가: 저장 여부 (회원이면 true, 비회원이면 false)
 }
