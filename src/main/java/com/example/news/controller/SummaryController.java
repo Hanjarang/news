@@ -5,6 +5,8 @@ import com.example.news.dto.SummaryResponse;
 import com.example.news.service.SummaryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,7 +23,9 @@ public class SummaryController {
   private final SummaryService summaryService;
 
   @PostMapping
-  public ResponseEntity<SummaryResponse> createSummary(@RequestBody SummaryRequest request) {
+  public ResponseEntity<SummaryResponse> createSummary(
+      @RequestBody SummaryRequest request,
+      @AuthenticationPrincipal OAuth2User oAuth2User) {
     return ResponseEntity.ok(summaryService.createSummary(request));
   }
 
@@ -35,4 +39,6 @@ public class SummaryController {
     summaryService.deleteSummary(summaryId);
     return  ResponseEntity.ok().build();
   }
+  
+
 }
