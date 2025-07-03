@@ -68,23 +68,31 @@ public class AIServiceImpl implements AIService {
 
       // 더 빠른 요약 모델들 (순서대로 시도)
       String[] modelUrls = {
-        "https://api-inference.huggingface.co/models/facebook/bart-large-cnn"// 원본 (백업)
+        "https://api-inference.huggingface.co/models/sshleifer/distilbart-cnn-12-6", // 더 빠른 모델
+        "https://api-inference.huggingface.co/models/facebook/bart-large-cnn",      // 원본 (백업)
+        "https://api-inference.huggingface.co/models/facebook/bart-base"            // 기본 모델 (가장 빠름)
       };
 
       ResponseEntity<String> response = null;
       Exception lastException = null;
 
       for (String modelUrl : modelUrls) {
+        long startTime = System.currentTimeMillis();
         try {
           log.info("Trying model: {}", modelUrl);
           response = restTemplate.postForEntity(modelUrl, entity, String.class);
+          long endTime = System.currentTimeMillis();
           
           if (response.getStatusCode().is2xxSuccessful()) {
-            log.info("Success with model: {}", modelUrl);
+            log.info("Success with model: {} (took {}ms)", modelUrl, endTime - startTime);
             break;
+          } else {
+            log.warn("Model {} returned status: {}", modelUrl, response.getStatusCode());
           }
         } catch (Exception e) {
-          log.warn("Failed with model {}: {}", modelUrl, e.getMessage());
+          long endTime = System.currentTimeMillis();
+          log.warn("Failed with model {}: {} (after {}ms)", modelUrl, e.getMessage(), 
+                   endTime - startTime);
           lastException = e;
           continue;
         }
