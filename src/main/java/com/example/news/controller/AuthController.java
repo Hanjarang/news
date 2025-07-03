@@ -80,7 +80,8 @@ public class AuthController {
         Map<String, Object> response = new HashMap<>();
         response.put("providers", Map.of(
             "naver", "/oauth2/authorization/naver",
-            "google", "/oauth2/authorization/google"
+            "google", "/oauth2/authorization/google",
+            "kakao", "/oauth2/authorization/kakao"
         ));
         response.put("message", "사용 가능한 OAuth2 제공자 목록");
         

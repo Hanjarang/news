@@ -60,6 +60,9 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         if (requestURI.contains("/login/oauth2/code/google")) {
             return "google";
         }
+        if (requestURI.contains("/login/oauth2/code/kakao")) {
+            return "kakao";
+        }
         
         // OAuth2 인증 요청 URL에서 제공자 감지 (fallback)
         if (requestURI.contains("/oauth2/authorization/naver")) {
@@ -68,8 +71,10 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         if (requestURI.contains("/oauth2/authorization/google")) {
             return "google";
         }
+        if (requestURI.contains("/oauth2/authorization/kakao")) {
+            return "kakao";
+        }
         
-        // 추후 카카오 추가 시 확장
         log.warn("알 수 없는 OAuth2 제공자: {}", requestURI);
         return "unknown";
     }
