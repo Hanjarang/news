@@ -1,6 +1,8 @@
 package com.example.news.controller;
 
+import com.example.news.dto.UserInfo;
 import com.example.news.entity.User;
+import com.example.news.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Slf4j
 public class AuthController {
+    
+    private final UserRepository userRepository;
     
     @GetMapping("/login-success")
     public ResponseEntity<Map<String, Object>> loginSuccess(
@@ -98,6 +102,65 @@ public class AuthController {
         response.put("user", oAuth2User.getAttributes());
         
         return ResponseEntity.ok(response);
+    }
+    
+    @GetMapping("/user-info")
+    public ResponseEntity<UserInfo> getCurrentUserInfo(@AuthenticationPrincipal OAuth2User oAuth2User) {
+        if (oAuth2User == null) {
+            return ResponseEntity.status(401).build();
+        }
+        
+        // OAuth2 사용자 정보에서 이메일 추출
+        String email = extractEmailFromOAuth2User(oAuth2User.getAttributes());
+        
+        if (email == null) {
+            return ResponseEntity.status(400).build();
+        }
+        
+        // 데이터베이스에서 사용자 정보 조회
+        User user = userRepository.findByEmail(email).orElse(null);
+        
+        if (user == null) {
+            return ResponseEntity.status(404).build();
+        }
+        
+        UserInfo userInfo = UserInfo.builder()
+                .id(user.getId())
+                .provider(user.getProvider())
+                .providerId(user.getProviderId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .createdAt(user.getCreatedAt())
+                .build();
+        
+        return ResponseEntity.ok(userInfo);
+    }
+    
+    private String extractEmailFromOAuth2User(Map<String, Object> attributes) {
+        // 네이버
+        if (attributes.containsKey("response")) {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> response = (Map<String, Object>) attributes.get("response");
+            if (response.containsKey("email")) {
+                return (String) response.get("email");
+            }
+        }
+        
+        // 구글
+        if (attributes.containsKey("email")) {
+            return (String) attributes.get("email");
+        }
+        
+        // 카카오
+        if (attributes.containsKey("kakao_account")) {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
+            if (kakaoAccount.containsKey("email")) {
+                return (String) kakaoAccount.get("email");
+            }
+        }
+        
+        return null;
     }
     
     @PostMapping("/logout")

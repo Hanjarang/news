@@ -44,4 +44,7 @@ public class NewsDocument {
 
     @Field(type = FieldType.Keyword)
     private String language;
+    
+    @Field(type = FieldType.Long)
+    private Long userId;  // 로그인한 사용자 ID (비회원은 null)
 } 

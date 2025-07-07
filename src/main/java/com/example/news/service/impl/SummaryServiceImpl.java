@@ -11,6 +11,7 @@ import com.example.news.repository.SummaryRepository;
 import com.example.news.service.AIService;
 import com.example.news.service.SummaryService;
 import java.time.LocalDateTime;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,7 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import com.example.news.entity.User;
 import com.example.news.repository.UserRepository;
 
@@ -40,11 +41,48 @@ public class SummaryServiceImpl implements SummaryService {
       return null; // 비회원
     }
 
-    UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-    String email = userDetails.getUsername(); // 또는 providerId
+    // OAuth2 사용자인 경우
+    if (authentication.getPrincipal() instanceof OAuth2User) {
+      OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
+      Map<String, Object> attributes = oAuth2User.getAttributes();
+      
+      // 각 OAuth2 제공자별로 이메일 추출
+      String email = extractEmailFromOAuth2User(attributes);
+      
+      if (email != null) {
+        return userRepository.findByEmail(email).orElse(null);
+      }
+    }
 
-    return userRepository.findByEmail(email)
-        .orElse(null);
+    return null; // OAuth2 사용자가 아니거나 이메일을 찾을 수 없는 경우
+  }
+  
+  // OAuth2 사용자 정보에서 이메일 추출
+  private String extractEmailFromOAuth2User(Map<String, Object> attributes) {
+    // 네이버
+    if (attributes.containsKey("response")) {
+      @SuppressWarnings("unchecked")
+      Map<String, Object> response = (Map<String, Object>) attributes.get("response");
+      if (response.containsKey("email")) {
+        return (String) response.get("email");
+      }
+    }
+    
+    // 구글
+    if (attributes.containsKey("email")) {
+      return (String) attributes.get("email");
+    }
+    
+    // 카카오
+    if (attributes.containsKey("kakao_account")) {
+      @SuppressWarnings("unchecked")
+      Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
+      if (kakaoAccount.containsKey("email")) {
+        return (String) kakaoAccount.get("email");
+      }
+    }
+    
+    return null;
   }
 
   @Override
