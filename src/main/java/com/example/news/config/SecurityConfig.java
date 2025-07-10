@@ -27,6 +27,7 @@ public class SecurityConfig {
                     "/api/v1/summaries/**",
                     "/api/v1/elasticsearch/**", // Elasticsearch API 접근 허용
                     "/api/v1/integrated-news/**", // 통합 뉴스 API 접근 허용
+                    "/api/v1/qa/**", // QA API 접근 허용
                     "/api/v1/auth/**", // 인증 관련 엔드포인트
                     "/oauth2/**" // OAuth2 관련 엔드포인트
                 ).permitAll()
